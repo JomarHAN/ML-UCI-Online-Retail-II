@@ -8,3 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Large UCI extract — commit the zip, not the unpacked CSV
+data/raw/online_retail_II.csv
