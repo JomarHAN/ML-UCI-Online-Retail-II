@@ -1,0 +1,13 @@
+{
+  "snapshot_date": "2011-09-10T12:50:00",
+  "data_max_date": "2011-12-09T12:50:00",
+  "target_window_days": 90,
+  "n_customers": 5256,
+  "n_features": 34,
+  "target_columns": [
+    "target_revenue_90d",
+    "target_orders_90d",
+    "target_purchased_90d"
+  ],
+  "id_column": "CustomerID"
+}
