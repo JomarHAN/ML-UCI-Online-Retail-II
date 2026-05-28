@@ -43,7 +43,7 @@ def drop_non_product_codes(df: pd.DataFrame) -> pd.DataFrame:
 
 def drop_non_positive(df: pd.DataFrame) -> pd.DataFrame:
     """Drop rows with non-positive Quantity or Price (data errors / non-sales)."""
-    return df[df["Quantity"] > 0 & df["Price"] > 0].copy()
+    return df[(df["Quantity"] > 0) & (df["Price"] > 0)].copy()
 
 def normalize_text(df: pd.DataFrame) -> pd.DataFrame:
     """Strip + uppercase Description, strip Country."""
@@ -58,14 +58,14 @@ def drop_admin_description(df: pd.DataFrame) -> pd.DataFrame:
     return df[-df['Description'].isin(config.ADMIN_DESCRIPTIONS)].copy()
 
 def canonicalize_descriptions(df: pd.DataFrame) -> pd.DataFrame:
-    """Give each StockCode a single canonical Description (its nost common one)."""
+    """Give each StockCode a single canonical Description (its most common one)."""
     out = df.copy()
     canonical = (
         out.dropna(subset=["Description"])
         .groupby("StockCode")["Description"]
         .agg(lambda x: x.mode().iloc[0] if not x.mode().empty else None)
     )
-    out["Description"] = out["Description"].map(canonical)
+    out["Description"] = out["StockCode"].map(canonical)
     return out.dropna(subset=["Description"]).copy()
 
 def add_derived_columns(df: pd.DataFrame) -> pd.DataFrame:

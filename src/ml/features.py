@@ -129,7 +129,7 @@ def _add_trend(features, feat_df, snapshot_date):
         features = features.merge(agg, on='CustomerID', how='left')
         
     trend_cols = [c for c in features.columns
-                  if c.starswith(('revenue_last','orders_last','revenue_prior','orders_prior'))]
+                  if c.startswith(('revenue_last','orders_last','revenue_prior','orders_prior'))]
     features[trend_cols] = features[trend_cols].fillna(0)
     
     features['revenue_trend_ratio'] = (
@@ -171,7 +171,8 @@ def _add_returns(features, cancellations, snapshot_date):
     features['return_count'] = features['return_count'].fillna(0).astype(int)
     features['return_value'] = features['return_value'].fillna(0)
     features['return_rate'] = (
-        features['return_value'] / features['monetary'] + config.RATIO_EPSILON
+        features['return_value'] /
+        (features['monetary'] + config.RATIO_EPSILON)
     )
     return features
 
