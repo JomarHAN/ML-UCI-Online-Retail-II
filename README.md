@@ -161,66 +161,19 @@ Each notebook contains a self-contained stage of the analysis pipeline. Below is
 - **`reports/figures/`** and **`reports/customer_recommendation_examples.md`**: visualizations and narrative examples to communicate results to non-technical stakeholders.
 
 ### Tests
-- **`tests/`**: currently empty — intended for unit and integration tests for data transforms and model scoring.
+- **`tests/`**: contains unit and integration tests for notebook transforms, data processing, and model scoring. The current suite includes 10 passing tests.
 
-### Quick mapping: technical action → business impact
-- Cleaning: prevents erroneous transactions from biasing decisions.
-- Aggregation/RFM: converts transactions into stable customer signals.
-- Modeling (CLV/Churn): produces scores used to prioritize spend and interventions.
-- Market-basket/Recommendations: generates operational outputs used in personalization and merchandising.
+### Current status
+- Notebook functions have been converted into reusable modules under `src/`.
+- Unit tests are implemented and passing.
+- Build/package assets and model artifacts are ready for reuse.
 
-### Next steps
-- Convert notebook functions to `src/` modules and add unit tests.
-- Add reproducible scripts for training (`src/train.py`) and scoring (`src/score.py`) with CI checks.
-- If you'd like, I can generate the per-notebook, cell-by-cell narrative mapping each cell number to a short "what/why/business" note — tell me if you want that level of granularity.
-
-
-### Work with the notebooks
-- `02_cleaning.ipynb` – data cleaning and validation
-- `03_feature_engineering.ipynb` – customer-level feature building
-- `04_segmentation.ipynb` – customer segmentation analysis
-- `05_clv_prediction.ipynb` – CLV model development
-- `06_churn_prediction.ipynb` – churn risk modeling
-- `07_market_basket.ipynb` – market basket and product associations
-- `08_recommendations.ipynb` – recommendation engine outputs
-
-```bash
-cd /Users/jomarnguyen/Desktop/uci-online-retail
-source .venv/bin/activate
-python -m pip install -e .
-## Directory Structure
-
-- `main.py` – package entrypoint
-- `data/interim/` – intermediate processing outputs
-- `data/processed/` – final datasets and recommendations
-- `models/` – serialized model artifacts
-- `notebooks/` – analysis, modeling, and recommendation notebooks
-- `reports/` – generated analysis figures and summary outputs
-- `src/` – placeholder package layout for future module code
-- `tests/` – testing folder (currently empty)
-
-## Data
-
-The raw dataset is stored at `data/raw/online_retail_II.csv` and is expected to contain transaction-level retail sales and customer behavior data. Processed outputs include customer metadata and recommendations.
-
-## Model Artifacts
-
-- `models/churn_xgboost.joblib` – saved churn prediction model
-- `models/clv_xgboost.joblib` – saved customer lifetime value model
-
-## Extending the Project
-
-To extend this repository, consider:
-
-- converting notebook logic into reusable Python modules under `src/`
-- adding end-to-end scripts for preprocessing, training, and inference
-- implementing tests in `tests/`
-- adding a CLI or API wrapper for model serving
-- enriching recommendations with collaborative filtering or embeddings
-
-## Notes
-
-- The current `main.py` file is a lightweight placeholder and can be updated with a production entrypoint or CLI.
-- Make sure the raw data file is present before rerunning the notebooks.
+### Notes
+- `main.py` is currently a lightweight placeholder and can be extended into a production entrypoint.
+- Ensure the raw data file is available before running the notebooks.
+- The notebooks remain available for exploration and for reproducing the analysis pipeline.
 
 
+## Next steps
+
+The project is actively progressing. Current work includes refining the reusable `src/` modules, expanding unit and integration coverage, and turning notebook analysis into a fully reproducible pipeline.
