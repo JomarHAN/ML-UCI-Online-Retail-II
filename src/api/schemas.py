@@ -41,7 +41,7 @@ class CustomerMetrics(BaseModel):
     historical_revenue_gbp: float
     predicted_clv_90d_gbp: float
     churn_risk: float = Field(..., ge=0.0, le=1.0)
-    recency_risk: int
+    recency_days: int
     order_frequency: int
     
     
