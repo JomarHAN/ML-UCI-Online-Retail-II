@@ -1,4 +1,4 @@
-# !/usr/bin/env bash
+#!/usr/bin/env bash
 # ============================================================================
 # scripts/docker_smoke_test.sh - verify the built container works end-to-end
 # ============================================================================
@@ -20,9 +20,9 @@ set -o pipefail
 IMAGE_NAME="uci-retail-api"
 TAG="smoke-test"
 CONTAINER_NAME="uci-retail-smoke"
-PORT="8001"     # use a different port to avoid clasing with a running dev server
+PORT="8001"     # use a different port to avoid clashing with a running dev server
 
-# Colos for pretty output
+# Colors for pretty output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -37,7 +37,7 @@ cleanup(){
     docker stop "$CONTAINER_NAME" >/dev/null 2>&1 || true
     docker rm "$CONTAINER_NAME" >/dev/null 2>&1 || true
 }
-# Always clean up when the script exists, no matter how
+# Always clean up when the script exits, no matter how
 trap cleanup EXIT
 
 # ---------------------------------------------------------------------------
@@ -64,9 +64,9 @@ docker run -d \
 # ---------------------------------------------------------------------------
 # Step 3: Wait for healthy
 # ---------------------------------------------------------------------------
-log "Wainting for container to become healthy..."
+log "Waiting for container to become healthy..."
 HEALTHY=false
-for i in ${seq 1 60}; do
+for i in $(seq 1 60); do
     if curl --fail --silent --max-time 2 "http://localhost:${PORT}/health" >/dev/null 2>&1; then
         HEALTHY=true
         break
@@ -75,7 +75,7 @@ for i in ${seq 1 60}; do
 done
 
 if [[ "$HEALTHY" != "true" ]]; then
-    err "Container did become healthy in 120 seconds"
+    err "Container did not become healthy in 120 seconds"
     err "Last 50 lines of logs:"
     docker logs --tail 50 "$CONTAINER_NAME"
     exit 1
@@ -115,7 +115,7 @@ assert_status "http://localhost:${PORT}/customers/top?n=5" "200" "GET /customers
 # Pull a real customer ID from the top-customers response
 log "Fetching a real customer ID..."
 CUSTOMER_ID=$(curl -fs "http://localhost:${PORT}/customers/top?n=1" \
-    | python3 -c "import sys.json; print(json.load(sys.stdin)['customers'][0]['customer_id'])")
+    | python3 -c "import sys, json; print(json.load(sys.stdin)['customers'][0]['customer_id'])")
 log " Using customer_id = $CUSTOMER_ID"
 
 assert_status "http://localhost:${PORT}/customers/${CUSTOMER_ID}/recommendation" "200" \
@@ -149,7 +149,7 @@ curl -fs "http://localhost:${PORT}/customers/${CUSTOMER_ID}/recommendation" \
 # ---------------------------------------------------------------------------
 log ""
 log "Image size:"
-docker images "$IMAGE_NAME:$TAG" --format " {{.Respository}}:{{.Tag}} {{.Size}}"
+docker images "$IMAGE_NAME:$TAG" --format " {{.Repository}}:{{.Tag}} {{.Size}}"
 
 log ""
 log "🎉 ALL CHECKS PASSED"

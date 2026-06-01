@@ -1,4 +1,25 @@
-# =============================================================================
+.venv
+env/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.cache/
+.DS_Store
+.env
+data/
+notebooks/
+reports/
+models/
+/.git
+*.sqlite3
+*.db
+*.parquet
+*.joblib
+*.log# =============================================================================
 # .dockerignore — what NOT to send to the Docker daemon when building
 # =============================================================================
 # Docker copies the entire directory ("build context") to the daemon before

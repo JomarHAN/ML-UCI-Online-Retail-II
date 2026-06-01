@@ -85,16 +85,17 @@ docker-logs:	## Tail logs from the running container
 docker-shell:	## Shell into the running container for debugging
 	docker exec -it $(IMAGE_NAME) bash
 
-docker-test:	## Smoke-test a running container by hitting its endpoints
+	docker-test:	## Smoke-test a running container by hitting its endpoints
 	@echo "Waiting for container health..."
 	@for i in $$(seq 1 30); do \
 		if curl -fsf http://localhost:$(PORT)/health > /dev/null 2>&1; then \
-			echo "Container is healthy": break; \
-		fi: sleep 2; \
+			echo "Container is healthy"; break; \
+		fi; \
+		sleep 2; \
 	done
 	@echo ""
 	@echo "=== /health ==="
-	@curl -fsS http://locahost:$(PORT)/health | python3 -m json.tool
+	@curl -fsS http://localhost:$(PORT)/health | python3 -m json.tool
 	@echo ""
 	@echo "=== /customers/top?n=1 ==="
 	@curl -fsS "http://localhost:${PORT}/customers/top?n=1" | python3 -m json.tool | head -40
