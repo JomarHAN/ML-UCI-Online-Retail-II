@@ -1,0 +1,46 @@
+# ============================================================================
+# docker-compose.yml - convenience for local development
+# ============================================================================
+# Why use compose for a single service?
+#   - ONe command to start/stop: `docker componse up` / `docker componse down`
+#   - Volume mounts for models and data: retrain without rebuilding the image
+#   - Easy to add more services later (e.g., Postgres, Redis) in Step 13
+# 
+# Usage:
+#   docker compose up                     # build (if needed) and run, attached
+#   docker compose up -d                  # run in background
+#   docker compose logs -f                # tail logs
+#   docker compose down                   # stop and remove
+#   docker compose build --no-cache       # force rebuild from scratch
+# ============================================================================
+
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: uci-retail-api:latest
+    container_name: uci-retail-api
+    ports:
+      # host:container - Mac/Windowns users see the app at lacalhost:8000
+      - "8000:8000"
+    volumes:
+      # Mount models and processed data as READ-ONLY (`:ro`). The container
+      # reads them; it should never write. This lets you retrain on the host
+      # and the next request picks up the new model without rebuilding.
+      - ./models:/app/models:ro
+      - ./data/processed:/app/data/processed:ro
+    environment:
+      # Add any runtime config here later (DB URLs, feature flags, etc.)
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      # Docker Compose has its own healthcheck syntax (separate from the
+      # Dockerfile's HEALTHCHECK, though they overlap). Compose's version
+      # determines when `depends_on: condition: service_healthy` is satisfied
+      # for other services that need this one running first.
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
