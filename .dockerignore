@@ -1,0 +1,110 @@
+# =============================================================================
+# .dockerignore — what NOT to send to the Docker daemon when building
+# =============================================================================
+# Docker copies the entire directory ("build context") to the daemon before
+# building. Anything in this file is excluded. This matters for THREE reasons:
+#
+# 1. SPEED: a smaller context uploads faster, especially over networks
+# 2. CACHE: changes to ignored files don't bust the layer cache
+# 3. SECURITY: prevents accidentally baking secrets, .env files, .git history,
+#    or local credentials into the image
+#
+# Rule of thumb: this should be even MORE aggressive than .gitignore.
+# .gitignore protects your repo; .dockerignore protects the image.
+# =============================================================================
+
+# ----- Python build artifacts -----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+.eggs/
+
+# ----- Virtual environments (we build a fresh one inside the image) -----
+.venv/
+venv/
+env/
+ENV/
+
+# ----- Git (image doesn't need version history) -----
+.git/
+.gitignore
+.gitattributes
+
+# ----- IDE and editor files -----
+.vscode/
+.idea/
+*.swp
+*.swo
+.cursor/
+*~
+
+# ----- OS files -----
+.DS_Store
+Thumbs.db
+
+# ----- Test artifacts -----
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ----- Jupyter -----
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ----- Notebooks themselves NOT excluded by default --------------------------
+# We deliberately ship the API code, NOT the notebooks. Uncomment the next
+# line if your image really doesn't need notebooks for any reason.
+notebooks/
+
+# ----- Raw data (HUGE; never bake into the image) ----------------------------
+# The CSV is ~95MB. Bundling it would massively bloat the image AND it's not
+# needed at runtime -- the API serves precomputed predictions, not the raw CSV.
+data/raw/
+data/interim/
+
+# ----- Reports and figures (not used at runtime) -----
+reports/
+
+# ----- Documentation (not used at runtime) -----
+docs/
+*.md
+!README.md          # keep top-level README in case we want it for /docs route
+
+# ----- Local environment files (CRITICAL: don't bake secrets into images) ----
+.env
+.env.*
+!.env.example       # this template IS safe to include
+
+# ----- Docker files themselves don't need to be inside the image -----
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# ----- CI/CD config (not needed at runtime) -----
+.github/
+.gitlab-ci.yml
+
+# ----- Lock files for OTHER package managers (we only use uv) -----
+poetry.lock
+Pipfile.lock
+requirements*.txt    # if you generate these for compatibility, regenerate at build
+
+# ----- Pytest scratch -----
+tests/__pycache__/
+
+# ----- Logs -----
+*.log
+logs/
+
+# ----- Tarballs and archives -----
+*.tar
+*.tar.gz
+*.zip
