@@ -191,7 +191,7 @@ def container():
     if result.returncode != 0:
         pytest.fail(f"docker run failed:\n{result.stderr}")
         
-    base_url = f"http:://localhost:{TEST_PORT}"
+    base_url = f"http://localhost:{TEST_PORT}"
     
     # 5. Wait for the app to become healthy. Model loading takes 5-20s after
     # startup, so we poll /health for up to STARTUP_TIMEOUT_S seconds.
@@ -221,7 +221,7 @@ def client(container) -> httpx2.Client:
         
         
 @pytest.fixture(scope="module")
-def know_customer_id(client) -> str:
+def known_customer_id(client) -> str:
     """A real CustomerID, fetched from the running API itself.
     
     Avoids hardcoding an ID that may not exist in the user's data, and tests
@@ -239,6 +239,7 @@ def know_customer_id(client) -> str:
 # -----------------------------------------------------------------------------
 # Group 1: Container lifecycle and runtime properties
 # -----------------------------------------------------------------------------
+@pytest.mark.usefixtures("container")
 class TestContainerRuntime:
     """Thngs that are only testable against a real running container."""
     
@@ -372,7 +373,7 @@ class TestEndpointsAgainstContainer:
         
     def test_top_customers(self, client):
         body = client.get("/customers/top", params={"n": 5}).json()
-        assert body["n_customers"] == 5
+        assert body["n_returned"] == 5
         # Sorted descending by priority
         priorities = [c["priority_score"] for c in body["customers"]]
         assert priorities == sorted(priorities, reverse=True)
@@ -392,7 +393,7 @@ class TestEndpointsAgainstContainer:
     def test_risk_endpoint_consistency(self, client, known_customer_id):
         """p_active + churn_risk must equal 1.0 (within float tolerance).
         Catches a polarity-flip bug."""
-        body = client.get(f"/customers/{know_customer_id}/risk").json()
+        body = client.get(f"/customers/{known_customer_id}/risk").json()
         total = body["p_active"] + body["churn_risk"]
         assert abs(total - 1.0) < 1e-6
         

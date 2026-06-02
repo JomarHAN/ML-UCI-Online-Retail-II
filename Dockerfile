@@ -115,7 +115,7 @@ EXPOSE 8000
 # - --timeout=5s: each check must respond within 5s
 # - --start-period=60s: give the app 60s to load models before checks count
 # - --retries=3: 3 consecutive failures = unhealthy
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries= \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
     CMD curl --fail http://localhost:8000/health || exit 1
 
 # Default command. Using JSON-array form (not shell form) so signals (SIGTERM,
