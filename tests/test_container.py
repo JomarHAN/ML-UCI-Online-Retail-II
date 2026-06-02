@@ -432,7 +432,7 @@ class TestConcurrency:
             
         statuses = [s for s, _ in results]
         latencies = [t for _, t in results]
-        assert all(a == 200 for s in statuses), f"Statuses: {statuses}"
+        assert all(s == 200 for s in statuses), f"Statuses: {statuses}"
         # Even under load, p95 latency should be reasonable
         latencies.sort()
         p95 = latencies[int(len(latencies) * 0.95)]
