@@ -35,14 +35,20 @@ help: ## Show this help message
 install:	## Install all dependencies (including dev)
 	uv sync --extra dev
 
-test:	## Run the full test suite
+test:	## Run fast tests only (ml + api, skip container tests)
+	uv run pytest tests/ -v -m "not slow"
+
+test-all:	## Run ALL tests including slow container tests (requires Docker)
 	uv run pytest tests/ -v
 
 test-ml:	## Run only the ML module tests
 	uv run pytest tests/test_ml.py -v
 
-test-api:	## Run only the API integration tests
+test-api:	## Run only the API integration tests (TestClient, in-progress)
 	uv run pytest tests/test_api.py -v
+
+test-container:	## Run only the container integration tests (requires Docker)
+	uv run pytest tests/test_container.py -v
 
 lint:	## Run ruff linter
 	uv run ruff check src/ tests/
@@ -85,7 +91,7 @@ docker-logs:	## Tail logs from the running container
 docker-shell:	## Shell into the running container for debugging
 	docker exec -it $(IMAGE_NAME) bash
 
-	docker-test:	## Smoke-test a running container by hitting its endpoints
+docker-test:	## Smoke-test a running container by hitting its endpoints
 	@echo "Waiting for container health..."
 	@for i in $$(seq 1 30); do \
 		if curl -fsf http://localhost:$(PORT)/health > /dev/null 2>&1; then \
