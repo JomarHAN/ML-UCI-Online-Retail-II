@@ -124,7 +124,7 @@ pytestmark = pytest.mark.skipif(
 # -----------------------------------------------------------------------------
 # Session-scoped fixture: build image (once), run container, tear down after
 # -----------------------------------------------------------------------------
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def container():
     """Boot the API container for the entire test session.
     
@@ -213,14 +213,14 @@ def container():
     remove_container(CONTAINER_NAME)
     
     
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def client(container) -> httpx2.Client:
     """Pre-configured httpx2 client pointed at the running container."""
     with httpx2.Client(base_url=container, timeout=10.0) as c:
         yield c
         
         
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def known_customer_id(client) -> str:
     """A real CustomerID, fetched from the running API itself.
     
