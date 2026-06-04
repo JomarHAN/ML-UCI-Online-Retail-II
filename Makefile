@@ -131,3 +131,33 @@ clean: 	## Remove build artifacts and caches
 docker-clean:	## Remove the built image and dangling images
 	-docker rmi $(IMAGE_NAME):$(TAG)
 	docker image prune -f
+
+# -----------------------------------------------------------------------------
+# AWS deployment (Terraform)
+# -----------------------------------------------------------------------------
+tf-init:	## Initialize Terraform (run once)
+	cd terraform && terraform init
+
+tf-plan:	## Show what Terraform would change
+	cd terraform && terraform plan
+
+tf-apply:	## Provision AWS infrastructure
+	cd terraform && terraform apply
+
+tf-destroy:	## Tear down all AWS insfrastructure (saves money!)
+	cd terraform && terraform destroy
+
+tf-output:	## Show Terraform outputs (URLs, IPs, etc.)
+	cd terraform && terraform output
+
+aws-upload-models:	## Sync trained models to S3
+	bash scripts/upload_models.sh
+
+aws-deploy:	## Build image, push to ECR, restart container on EC2
+	bash scripts/deploy.sh
+
+aws-ssh:	## SSH into the EC2 instance
+	$$(cd terraform && terraform output -raw ssh_command)
+
+aws-logs:	## Tail container logs on EC2
+	$$(cd terraform && terraform output -raw ssh_command) 'sudo journalctl -u uci-retail-api -f'
