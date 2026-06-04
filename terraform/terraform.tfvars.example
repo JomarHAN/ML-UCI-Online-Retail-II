@@ -1,0 +1,27 @@
+# =============================================================================
+# terraform.tfvars.example — example variable values
+# =============================================================================
+# How to use:
+#   1. cp terraform.tfvars.example terraform.tfvars
+#   2. Fill in YOUR values (especially my_ip_cidr)
+#   3. The real terraform.tfvars is gitignored — never commit it
+#
+# Find your public IP:  curl -s https://checkip.amazonaws.com
+# Append /32 for "exactly this IP only" (this is what you want).
+# =============================================================================
+
+aws_region = "us-east-1"
+
+project_name = "uci-retail"
+
+# Your public IP in CIDR notation. /32 = single IP. NEVER use 0.0.0.0/0.
+my_ip_cidr = "203.0.113.42/32"
+
+# Path to your SSH public key. The Terraform code uses pathexpand() so ~/ works.
+ssh_public_key_path = "~/.ssh/aws-ec2.pub"
+
+# t3.micro is free tier eligible. Bump to t3.small (~$15/mo) if memory issues.
+instance_type = "t3.micro"
+
+# Port your FastAPI container listens on (matches Dockerfile EXPOSE).
+api_port = 8000
